@@ -24,6 +24,7 @@ from collections import namedtuple
 
 import github.GithubObject
 import github.PullRequest
+import github.Workflow
 
 
 class WorkflowRun(github.GithubObject.CompletableGithubObject):
@@ -193,6 +194,15 @@ class WorkflowRun(github.GithubObject.CompletableGithubObject):
         """
         self._completeIfNotSet(self._workflow_url)
         return self._workflow_url.value
+
+    def get_workflow(self):
+        """
+        :rtype: :class:`github.Workflow.Workflow`
+        """
+        headers, data = self._requester.requestJsonAndCheck(
+            "GET", self._workflow_url.value
+        )
+        return github.Workflow.Workflow(self._requester, headers, data, completed=True)
 
     @property
     def head_commit(self):
